@@ -1,0 +1,14 @@
+# ------------------------------------
+# 1. Backend (todo-backend)
+# ------------------------------------
+/todo-backend/node_modules
+/todo-backend/.env
+
+# ------------------------------------
+# 3. Others
+# ------------------------------------
+
+npm-debug.log*
+yarn-debug.log*
+
+.DS_Store
