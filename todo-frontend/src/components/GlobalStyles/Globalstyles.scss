@@ -1,0 +1,22 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --primary-color: #4a90e2;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --bg-gradient: linear-gradient(141deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 19%, rgba(0, 212, 255, 1) 100%);
+    --bg-color: #020024;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg-color);
+    background: var(--bg-gradient) no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

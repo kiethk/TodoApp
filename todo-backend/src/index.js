@@ -2,6 +2,8 @@ require("dotenv").config();
 
 const mongoose = require("mongoose");
 const express = require("express");
+//Using cors to add Header Access-Control-Allow-Origin
+const cors = require("cors");
 const app = express();
 const Todo = require("./models/Todo");
 
@@ -12,6 +14,7 @@ mongoose
     .catch((error) => console.log(error));
 
 //Middleware
+app.use(cors());
 app.use(express.json());
 
 //Define routes
