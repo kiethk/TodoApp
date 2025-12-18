@@ -11,6 +11,8 @@ function TodoList() {
     const [editingId, setEditingId] = useState(null);
     const [editingText, setEditingText] = useState("");
     const [filter, setFilter] = useState("all");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [appliedSearchTerm, setAppliedSearchTerm] = useState("");
 
     useEffect(() => {
         const fetchTodos = async () => {
@@ -123,30 +125,62 @@ function TodoList() {
         setFilter(type);
     };
 
+    const handleSearch = () => {
+        setAppliedSearchTerm(searchTerm);
+    };
+
+    const handleClearSearch = () => {
+        setSearchTerm("");
+        setAppliedSearchTerm("");
+    };
+
+    const filteredTodos = todos.filter((todo) => {
+        const matchStatus =
+            filter === "all" || (filter === "completed" && todo.completed) || (filter === "active" && !todo.completed);
+
+        const matchSearch = todo.title.toLowerCase().includes(appliedSearchTerm.toLowerCase());
+
+        return matchStatus && matchSearch;
+    });
+
     return (
         <div className={cx("wrapper")}>
             <h1>Todo App</h1>
             <form onSubmit={(e) => handleSubmit(e)}>
-                <input type="text" value={newTodo} onChange={(e) => handleChange(e)} />
+                <input
+                    type="text"
+                    placeholder="Enter your tasks..."
+                    value={newTodo}
+                    onChange={(e) => handleChange(e)}
+                />
                 <button type="submit">Add</button>
             </form>
+            <div className={cx("search-box")}>
+                <input
+                    type="text"
+                    placeholder="Search tasks..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                {searchTerm && (
+                    <button className={cx("clear-btn")} onClick={handleClearSearch}>
+                        &times;
+                    </button>
+                )}
+                <button onClick={handleSearch}>Search</button>
+            </div>
             <div>
                 <button onClick={() => handleFilterChange("all")}>All</button>
                 <button onClick={() => handleFilterChange("active")}>Active</button>
                 <button onClick={() => handleFilterChange("completed")}>Completed</button>
             </div>
             <ul>
-                {todos
-                    .filter((todo) => {
-                        if (filter === "all") {
-                            return true;
-                        } else if (filter === "completed") {
-                            return todo.completed;
-                        } else if (filter === "active") {
-                            return !todo.completed;
-                        }
-                    })
-                    .map((todo) => {
+                {filteredTodos.length === 0 ? (
+                    <li className={cx("no-result")}>
+                        {appliedSearchTerm ? `🔍 No results for "${appliedSearchTerm}"` : "📝 Add your task!"}
+                    </li>
+                ) : (
+                    filteredTodos.map((todo) => {
                         const index = todo._id;
                         const isCompleted = todo.completed;
                         return (
@@ -179,7 +213,8 @@ function TodoList() {
                                 <button onClick={() => handleDelete(index)}>&times;</button>
                             </li>
                         );
-                    })}
+                    })
+                )}
             </ul>
         </div>
     );
