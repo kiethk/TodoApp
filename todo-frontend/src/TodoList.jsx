@@ -13,6 +13,7 @@ function TodoList() {
     const [filter, setFilter] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
     const [appliedSearchTerm, setAppliedSearchTerm] = useState("");
+    const [selectedIds, setSelectedIds] = useState([]);
 
     useEffect(() => {
         const fetchTodos = async () => {
@@ -134,6 +135,74 @@ function TodoList() {
         setAppliedSearchTerm("");
     };
 
+    const handleSelect = (e, index) => {
+        const isChecked = e.target.checked;
+
+        if (isChecked) {
+            setSelectedIds((prev) => [...prev, index]);
+        } else {
+            setSelectedIds((prev) => prev.filter((id) => id !== index));
+        }
+    };
+
+    const handleSelectAll = (e) => {
+        const isChecked = e.target.checked;
+        if (isChecked) {
+            setSelectedIds(filteredTodos.map((todo) => todo._id));
+        } else {
+            setSelectedIds([]);
+        }
+    };
+
+    const handleDeleteSelected = async () => {
+        try {
+            const deletePromises = selectedIds.map((id) =>
+                fetch(`http://localhost:3000/todos/${id}`, { method: "DELETE" })
+            );
+
+            await Promise.all(deletePromises);
+
+            setTodos((prev) => prev.filter((todo) => !selectedIds.includes(todo._id)));
+            setSelectedIds([]);
+        } catch (error) {
+            console.error("Error when deleting selected items: ", error);
+            alert("Cannot delete all of selected items!");
+        }
+    };
+
+    const handleToggleCompleteSelected = async () => {
+        try {
+            const updatePromises = selectedIds.map(async (id) => {
+                const selectedTodo = filteredTodos.find((todo) => todo._id === id);
+
+                const res = await fetch(`http://localhost:3000/todos/${id}`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ completed: !selectedTodo.completed }),
+                });
+
+                if (!res.ok) {
+                    throw new Error(`Error when updating item with id: ${id}`);
+                }
+
+                return res.json();
+            });
+
+            await Promise.all(updatePromises);
+
+            setTodos((prev) =>
+                prev.map((todo) => (selectedIds.includes(todo._id) ? { ...todo, completed: !todo.completed } : todo))
+            );
+        } catch (error) {
+            console.error("Error when updating selected items: ", error);
+            alert("Cannot Update all of selected items!");
+        }
+    };
+
+    console.log("render");
+
     const filteredTodos = todos.filter((todo) => {
         const matchStatus =
             filter === "all" || (filter === "completed" && todo.completed) || (filter === "active" && !todo.completed);
@@ -174,7 +243,21 @@ function TodoList() {
                 <button onClick={() => handleFilterChange("active")}>Active</button>
                 <button onClick={() => handleFilterChange("completed")}>Completed</button>
             </div>
-            <ul>
+            <div>
+                <input
+                    type="checkbox"
+                    checked={selectedIds.length === filteredTodos.length && selectedIds.length > 0}
+                    onChange={(e) => handleSelectAll(e)}
+                />
+                {selectedIds.length > 0 && (
+                    <div className={cx("bulk-actions")}>
+                        <span>Selected: {selectedIds.length}</span>
+                        <button onClick={handleDeleteSelected}>Delete</button>
+                        <button onClick={handleToggleCompleteSelected}>Reverse complete state</button>
+                    </div>
+                )}
+            </div>
+            <ul className={cx("todo-list")}>
                 {filteredTodos.length === 0 ? (
                     <li className={cx("no-result")}>
                         {appliedSearchTerm ? `🔍 No results for "${appliedSearchTerm}"` : "📝 Add your task!"}
@@ -184,11 +267,11 @@ function TodoList() {
                         const index = todo._id;
                         const isCompleted = todo.completed;
                         return (
-                            <li key={index}>
+                            <li className={cx("todo-item", { completed: isCompleted })} key={index}>
                                 <input
                                     type="checkbox"
-                                    checked={isCompleted}
-                                    onChange={() => handleToggleComplete(index, isCompleted)}
+                                    checked={selectedIds.includes(index)}
+                                    onChange={(e) => handleSelect(e, index)}
                                 />
                                 {editingId === index ? (
                                     <input
@@ -209,8 +292,15 @@ function TodoList() {
                                 ) : (
                                     <span className={cx({ completed: isCompleted })}>{todo.title}</span>
                                 )}
-                                <button onClick={() => handleEditClick(index, todo.title)}>Edit</button>
-                                <button onClick={() => handleDelete(index)}>&times;</button>
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        checked={isCompleted}
+                                        onChange={() => handleToggleComplete(index, isCompleted)}
+                                    />
+                                    <button onClick={() => handleEditClick(index, todo.title)}>Edit</button>
+                                    <button onClick={() => handleDelete(index)}>&times;</button>
+                                </div>
                             </li>
                         );
                     })

@@ -1,7 +1,22 @@
 .wrapper {
     min-width: 550px;
-    min-height: 400px;
+    height: 60vh;
     padding: 20px;
     background-color: #fff5ee;
     border-radius: 5px;
+}
+
+.todo-list {
+    // tối ưu sau
+    height: 300px;
+    overflow: auto;
+}
+
+.todo-item {
+    display: flex;
+    justify-content: space-between;
+
+    &.completed {
+        text-decoration: line-through;
+    }
 }
