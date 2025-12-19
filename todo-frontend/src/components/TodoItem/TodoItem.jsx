@@ -30,8 +30,8 @@ function TodoItem({
                     type="text"
                     value={editingText}
                     onChange={(e) => onEditChange(e.target.value)}
-                    onBlur={() => onEditBlur(index)}
-                    onKeyDown={(e) => onEditKeyDown(e, index)}
+                    onBlur={() => onEditBlur(index, editingText)}
+                    onKeyDown={(e) => onEditKeyDown(e)}
                     autoFocus
                 />
             ) : (
