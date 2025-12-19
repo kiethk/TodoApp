@@ -6,6 +6,7 @@ import styles from "./TodoList.module.scss";
 import TodoItem from "../TodoItem/TodoItem";
 import Wrapper from "../Wrapper/Wrapper";
 import Search from "../Search/Search";
+import BulkActions from "../BulkActions/BulkActions";
 
 const cx = classNames.bind(styles);
 
@@ -115,15 +116,21 @@ function TodoList({ todos, onSetTodos, onDelete }) {
         }
     };
 
-    const handleDeleteSelected = async () => {
+    const handleMoveToTrashSelected = async () => {
         try {
             const deletePromises = selectedIds.map((id) =>
-                fetch(`http://localhost:3000/todos/${id}`, { method: "DELETE" })
+                fetch(`http://localhost:3000/todos/${id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ isDeleted: true }),
+                })
             );
 
             await Promise.all(deletePromises);
 
-            onSetTodos((prev) => prev.filter((todo) => !selectedIds.includes(todo._id)));
+            onSetTodos((prev) =>
+                prev.map((todo) => (selectedIds.includes(todo._id) ? { ...todo, isDeleted: true } : todo))
+            );
             setSelectedIds([]);
         } catch (error) {
             console.error("Error when deleting selected items: ", error);
@@ -189,25 +196,18 @@ function TodoList({ todos, onSetTodos, onDelete }) {
                 <button type="submit">Add</button>
             </form>
             <Search onSubmit={handleSearch} />
-            <div className={cx('filter')}>
+            <div className={cx("filter")}>
                 <button onClick={() => handleFilterChange("all")}>All</button>
                 <button onClick={() => handleFilterChange("active")}>Active</button>
                 <button onClick={() => handleFilterChange("completed")}>Completed</button>
             </div>
-            <div className={cx('bulk-actions')}>
-                <input
-                    type="checkbox"
-                    checked={selectedIds.length === filteredTodos.length && selectedIds.length > 0}
-                    onChange={(e) => handleSelectAll(e)}
-                />
-                {selectedIds.length > 0 && (
-                    <div className={cx("bulk-actions")}>
-                        <span>Selected: {selectedIds.length}</span>
-                        <button onClick={handleDeleteSelected}>Delete</button>
-                        <button onClick={handleToggleCompleteSelected}>Reverse complete state</button>
-                    </div>
-                )}
-            </div>
+            <BulkActions selectedIds={selectedIds} handleSelectAll={handleSelectAll} filteredTodos={filteredTodos}>
+                <div className={cx("bulk-actions")}>
+                    <span>Selected: {selectedIds.length}</span>
+                    <button onClick={handleMoveToTrashSelected}>Delete</button>
+                    <button onClick={handleToggleCompleteSelected}>Reverse complete state</button>
+                </div>
+            </BulkActions>
             <ul className={cx("todo-list")}>
                 {filteredTodos.length === 0 ? (
                     <li className={cx("no-result")}>
