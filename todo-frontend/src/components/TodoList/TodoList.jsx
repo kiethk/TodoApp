@@ -1,30 +1,21 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import classNames from "classnames/bind";
 import styles from "./TodoList.module.scss";
 import TodoItem from "../TodoItem/TodoItem";
+import Wrapper from "../Wrapper/Wrapper";
+import Search from "../Search/Search";
 
 const cx = classNames.bind(styles);
 
-function TodoList() {
-    const [todos, setTodos] = useState([]);
+function TodoList({ todos, onSetTodos, onDelete }) {
     const [newTodo, setNewTodo] = useState("");
     const [editingId, setEditingId] = useState(null);
     const [editingText, setEditingText] = useState("");
     const [filter, setFilter] = useState("all");
-    const [searchTerm, setSearchTerm] = useState("");
     const [appliedSearchTerm, setAppliedSearchTerm] = useState("");
     const [selectedIds, setSelectedIds] = useState([]);
-
-    useEffect(() => {
-        const fetchTodos = async () => {
-            fetch("http://localhost:3000/todos")
-                .then((res) => res.json())
-                .then((res) => setTodos(res));
-        };
-
-        fetchTodos();
-    }, []);
 
     const handleChange = (e) => {
         setNewTodo(e.target.value);
@@ -48,12 +39,12 @@ function TodoList() {
 
         const createdTodo = await res.json();
 
-        setTodos([...todos, createdTodo]);
+        onSetTodos([...todos, createdTodo]);
 
         setNewTodo("");
     };
 
-    const handleToggleComplete = useCallback(async (index, isCompleted) => {
+    const handleToggleComplete = async (index, isCompleted) => {
         const newCompleteState = !isCompleted;
 
         const res = await fetch(`http://localhost:3000/todos/${index}`, {
@@ -66,7 +57,7 @@ function TodoList() {
 
         const updatedTodo = await res.json();
 
-        setTodos((prevTodos) => {
+        onSetTodos((prevTodos) => {
             return prevTodos.map((todo) => {
                 if (todo._id === index) {
                     return updatedTodo;
@@ -74,21 +65,9 @@ function TodoList() {
                 return todo;
             });
         });
-    }, []);
+    };
 
-    const handleDelete = useCallback(async (index) => {
-        const res = await fetch(`http://localhost:3000/todos/${index}`, {
-            method: "DELETE",
-        });
-
-        if (res.ok) {
-            setTodos((prev) => prev.filter((todo) => todo._id !== index));
-        } else {
-            alert("Có lỗi xảy ra khi xóa công việc!");
-        }
-    }, []);
-
-    const handleEdit = useCallback(async (id, text) => {
+    const handleEdit = async (id, text) => {
         if (!text.trim()) return;
 
         const res = await fetch(`http://localhost:3000/todos/${id}`, {
@@ -98,31 +77,26 @@ function TodoList() {
         });
 
         const updatedTodo = await res.json();
-        setTodos((prev) => prev.map((t) => (t._id === id ? updatedTodo : t)));
+        onSetTodos((prev) => prev.map((t) => (t._id === id ? updatedTodo : t)));
 
         setEditingId(null);
         setEditingText("");
-    }, []);
+    };
 
-    const handleEditClick = useCallback((index, title) => {
+    const handleEditClick = (index, title) => {
         setEditingId(index);
         setEditingText(title);
-    }, []);
+    };
 
     const handleFilterChange = (type) => {
         setFilter(type);
     };
 
-    const handleSearch = () => {
-        setAppliedSearchTerm(searchTerm);
+    const handleSearch = (text) => {
+        setAppliedSearchTerm(text);
     };
 
-    const handleClearSearch = () => {
-        setSearchTerm("");
-        setAppliedSearchTerm("");
-    };
-
-    const handleSelect = useCallback((e, index) => {
+    const handleSelect = (e, index) => {
         const isChecked = e.target.checked;
 
         if (isChecked) {
@@ -130,7 +104,7 @@ function TodoList() {
         } else {
             setSelectedIds((prev) => prev.filter((id) => id !== index));
         }
-    }, []);
+    };
 
     const handleSelectAll = (e) => {
         const isChecked = e.target.checked;
@@ -149,7 +123,7 @@ function TodoList() {
 
             await Promise.all(deletePromises);
 
-            setTodos((prev) => prev.filter((todo) => !selectedIds.includes(todo._id)));
+            onSetTodos((prev) => prev.filter((todo) => !selectedIds.includes(todo._id)));
             setSelectedIds([]);
         } catch (error) {
             console.error("Error when deleting selected items: ", error);
@@ -179,7 +153,7 @@ function TodoList() {
 
             await Promise.all(updatePromises);
 
-            setTodos((prev) =>
+            onSetTodos((prev) =>
                 prev.map((todo) => (selectedIds.includes(todo._id) ? { ...todo, completed: !todo.completed } : todo))
             );
         } catch (error) {
@@ -189,17 +163,22 @@ function TodoList() {
     };
 
     const filteredTodos = todos.filter((todo) => {
+        const isNotDeleted = !todo.isDeleted;
+
         const matchStatus =
             filter === "all" || (filter === "completed" && todo.completed) || (filter === "active" && !todo.completed);
 
         const matchSearch = todo.title.toLowerCase().includes(appliedSearchTerm.toLowerCase());
 
-        return matchStatus && matchSearch;
+        return matchStatus && matchSearch && isNotDeleted;
     });
 
     return (
-        <div className={cx("wrapper")}>
+        <Wrapper>
             <h1>Todo App</h1>
+            <Link to="/trash">
+                <button>Trash</button>
+            </Link>
             <form onSubmit={(e) => handleSubmit(e)}>
                 <input
                     type="text"
@@ -209,26 +188,13 @@ function TodoList() {
                 />
                 <button type="submit">Add</button>
             </form>
-            <div className={cx("search-box")}>
-                <input
-                    type="text"
-                    placeholder="Search tasks..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                {searchTerm && (
-                    <button className={cx("clear-btn")} onClick={handleClearSearch}>
-                        &times;
-                    </button>
-                )}
-                <button onClick={handleSearch}>Search</button>
-            </div>
-            <div>
+            <Search onSubmit={handleSearch} />
+            <div className={cx('filter')}>
                 <button onClick={() => handleFilterChange("all")}>All</button>
                 <button onClick={() => handleFilterChange("active")}>Active</button>
                 <button onClick={() => handleFilterChange("completed")}>Completed</button>
             </div>
-            <div>
+            <div className={cx('bulk-actions')}>
                 <input
                     type="checkbox"
                     checked={selectedIds.length === filteredTodos.length && selectedIds.length > 0}
@@ -263,7 +229,7 @@ function TodoList() {
                                 onSelect={handleSelect}
                                 onToggle={handleToggleComplete}
                                 onEditClick={handleEditClick}
-                                onDelete={handleDelete}
+                                onDelete={onDelete}
                                 onEditChange={setEditingText}
                                 onEditBlur={handleEdit}
                                 onEditKeyDown={(e) => {
@@ -275,7 +241,7 @@ function TodoList() {
                     })
                 )}
             </ul>
-        </div>
+        </Wrapper>
     );
 }
 

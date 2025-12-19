@@ -6,9 +6,13 @@ const todoSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        isDeleted: {
+            type: Boolean,
+            default: false,
+        },
         completed: {
             type: Boolean,
-            default: false
+            default: false,
         },
         dueDate: {
             type: Date,
