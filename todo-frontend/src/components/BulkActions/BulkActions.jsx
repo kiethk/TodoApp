@@ -1,4 +1,3 @@
-import { useState } from "react";
 import classNames from "classnames/bind";
 
 import styles from "./BulkActions.module.scss";
@@ -13,7 +12,13 @@ function BulkActions({ children, selectedIds, handleSelectAll, filteredTodos }) 
                 checked={selectedIds.length === filteredTodos.length && selectedIds.length > 0}
                 onChange={(e) => handleSelectAll(e)}
             />
-            {selectedIds.length > 0 && children}
+
+            {selectedIds.length > 0 && (
+                <>
+                    <span>Selected: {selectedIds.length}</span>
+                    {children}
+                </>
+            )}
         </div>
     );
 }

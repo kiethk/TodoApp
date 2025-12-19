@@ -19,9 +19,8 @@ function TodoItem({
     onEditChange,
     onEditBlur,
     onEditKeyDown,
+    children,
 }) {
-    console.log("render");
-
     return (
         <li className={cx("todo-item", { completed: isCompleted })}>
             <input type="checkbox" checked={isSelected} onChange={(e) => onSelect(e, index)} />
@@ -38,11 +37,15 @@ function TodoItem({
             ) : (
                 <span className={cx({ completed: isCompleted })}>{todo.title}</span>
             )}
-            <div>
-                <input type="checkbox" checked={isCompleted} onChange={() => onToggle(index, isCompleted)} />
-                <button onClick={() => onEditClick(index, todo.title)}>Edit</button>
-                <button onClick={() => onDelete(index)}>&times;</button>
-            </div>
+            {children ? (
+                children
+            ) : (
+                <div>
+                    <input type="checkbox" checked={isCompleted} onChange={() => onToggle(index, isCompleted)} />
+                    <button onClick={() => onEditClick(index, todo.title)}>Edit</button>
+                    <button onClick={() => onDelete(index)}>&times;</button>
+                </div>
+            )}
         </li>
     );
 }

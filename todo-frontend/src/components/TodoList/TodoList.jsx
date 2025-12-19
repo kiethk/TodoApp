@@ -203,7 +203,6 @@ function TodoList({ todos, onSetTodos, onDelete }) {
             </div>
             <BulkActions selectedIds={selectedIds} handleSelectAll={handleSelectAll} filteredTodos={filteredTodos}>
                 <div className={cx("bulk-actions")}>
-                    <span>Selected: {selectedIds.length}</span>
                     <button onClick={handleMoveToTrashSelected}>Delete</button>
                     <button onClick={handleToggleCompleteSelected}>Reverse complete state</button>
                 </div>

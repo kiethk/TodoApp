@@ -69,6 +69,7 @@ function App() {
                     element={
                         <TodoTrash
                             todos={trashTodos}
+                            onSetTodos={setTodos}
                             onRestore={handleRestore}
                             onPermanentDelete={handlePermanentDelete}
                         />
