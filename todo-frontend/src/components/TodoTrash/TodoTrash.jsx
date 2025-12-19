@@ -13,6 +13,7 @@ const cx = classNames.bind(styles);
 function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
     const [appliedSearchTerm, setAppliedSearchTerm] = useState("");
     const [selectedIds, setSelectedIds] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSearch = (text) => {
         setAppliedSearchTerm(text);
@@ -20,6 +21,7 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
 
     const handleDeletePermanentSelected = async () => {
         if (!window.confirm("Do you want to delete all of them?")) return;
+        setIsLoading(true);
         try {
             const deletePromises = selectedIds.map((id) =>
                 fetch(`http://localhost:3000/todos/${id}`, {
@@ -34,10 +36,13 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
         } catch (error) {
             console.error("Error when deleting selected items: ", error);
             alert("Cannot delete all of selected items!");
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleRestoreSelected = async () => {
+        setIsLoading(true);
         try {
             const restorePromises = selectedIds.map((id) =>
                 fetch(`http://localhost:3000/todos/${id}`, {
@@ -56,6 +61,8 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
         } catch (error) {
             console.error("Error when restoring selected items: ", error);
             alert("Cannot restore all of selected items!");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -88,8 +95,12 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
             </Link>
             <Search onSubmit={handleSearch} />
             <BulkActions selectedIds={selectedIds} handleSelectAll={handleSelectAll} filteredTodos={filteredTodos}>
-                <button onClick={handleDeletePermanentSelected}>Delete</button>
-                <button onClick={handleRestoreSelected}>Restore</button>
+                <button disabled={isLoading} onClick={handleDeletePermanentSelected}>
+                    Delete
+                </button>
+                <button disabled={isLoading} onClick={handleRestoreSelected}>
+                    Restore
+                </button>
             </BulkActions>
             <ul className={cx("todo-trash")}>
                 {filteredTodos.map((todo) => (

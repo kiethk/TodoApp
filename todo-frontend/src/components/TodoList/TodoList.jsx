@@ -17,6 +17,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
     const [filter, setFilter] = useState("all");
     const [appliedSearchTerm, setAppliedSearchTerm] = useState("");
     const [selectedIds, setSelectedIds] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
         setNewTodo(e.target.value);
@@ -117,6 +118,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
     };
 
     const handleMoveToTrashSelected = async () => {
+        setIsLoading(true);
         try {
             const deletePromises = selectedIds.map((id) =>
                 fetch(`http://localhost:3000/todos/${id}`, {
@@ -135,10 +137,13 @@ function TodoList({ todos, onSetTodos, onDelete }) {
         } catch (error) {
             console.error("Error when deleting selected items: ", error);
             alert("Cannot delete all of selected items!");
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleToggleCompleteSelected = async () => {
+        setIsLoading(true);
         try {
             const updatePromises = selectedIds.map(async (id) => {
                 const selectedTodo = filteredTodos.find((todo) => todo._id === id);
@@ -166,6 +171,8 @@ function TodoList({ todos, onSetTodos, onDelete }) {
         } catch (error) {
             console.error("Error when updating selected items: ", error);
             alert("Cannot Update all of selected items!");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -203,8 +210,12 @@ function TodoList({ todos, onSetTodos, onDelete }) {
             </div>
             <BulkActions selectedIds={selectedIds} handleSelectAll={handleSelectAll} filteredTodos={filteredTodos}>
                 <div className={cx("bulk-actions")}>
-                    <button onClick={handleMoveToTrashSelected}>Delete</button>
-                    <button onClick={handleToggleCompleteSelected}>Reverse complete state</button>
+                    <button disabled={isLoading} onClick={handleMoveToTrashSelected}>
+                        Delete
+                    </button>
+                    <button disabled={isLoading} onClick={handleToggleCompleteSelected}>
+                        Reverse complete state
+                    </button>
                 </div>
             </BulkActions>
             <ul className={cx("todo-list")}>
