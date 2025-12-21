@@ -1,8 +1,145 @@
 .todo-item {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-height: 50px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 
     &.completed {
-        text-decoration: line-through;
+        .title {
+            text-decoration: line-through;
+            font-style: italic;
+            opacity: 0.7;
+        }
+        box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px,
+            var(--success-color) 0px -20px 36px -28px inset;
+    }
+
+    & + .todo-item {
+        margin-top: 8px;
+    }
+
+    &.checked {
+        background-color: var(--primary-color1-light);
+    }
+}
+
+.todo-item-left {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.todo-check {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &::before {
+        content: "";
+        position: absolute;
+        display: none;
+        top: 50%;
+        left: 20px;
+        width: 14px;
+        height: 27px;
+        transform: translateY(-62%) rotate(45deg);
+        background-color: transparent;
+        border-bottom: 5px solid var(--primary-color1-light);
+        border-right: 5px solid var(--primary-color1-light);
+        box-sizing: border-box;
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateY(-50%);
+        width: 1px;
+        height: 90%;
+        background-color: #eee;
+    }
+
+    &.checked::before {
+        display: inline-block;
+    }
+
+    &.checked::after {
+        background-color: var(--primary-color1-light);
+    }
+}
+
+.title {
+    flex: 1;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    font-weight: 600;
+    padding: 10px;
+}
+
+.edit-input {
+    flex: 1;
+    margin: 0 10px;
+    font-size: 1.6rem;
+    border: none;
+    outline: none;
+    border-radius: 8px;
+    padding: 5px 10px;
+    border: 1px solid var(--primary-color1-light);
+}
+
+.todo-item-right {
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-completed {
+    cursor: pointer;
+    user-select: none;
+    width: 100px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border: 1px solid #eee;
+    color: #eee;
+    border-radius: 99px;
+    transition: all 0.3s ease;
+
+    &.completed {
+        border-color: var(--success-color);
+        color: var(--success-color);
+    }
+}
+
+.action {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+
+    &.edit {
+        background-color: #eee;
+    }
+
+    &.danger {
+        background-color: var(--danger-color);
     }
 }

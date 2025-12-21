@@ -1,7 +1,10 @@
 import classNames from "classnames/bind";
 import { memo } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 
 import styles from "./TodoItem.module.scss";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 const cx = classNames.bind(styles);
 
@@ -22,31 +25,53 @@ function TodoItem({
     children,
 }) {
     return (
-        <li className={cx("todo-item", { completed: isCompleted })}>
-            <input type="checkbox" checked={isSelected} onChange={(e) => onSelect(e, index)} />
-            {isEditing ? (
-                <input
-                    className={cx("edit-input")}
-                    type="text"
-                    value={editingText}
-                    onChange={(e) => onEditChange(e.target.value)}
-                    onBlur={() => onEditBlur(index, editingText)}
-                    onKeyDown={(e) => onEditKeyDown(e)}
-                    autoFocus
-                />
-            ) : (
-                <span className={cx({ completed: isCompleted })}>{todo.title}</span>
-            )}
+        <label htmlFor={index} className={cx("todo-item", { completed: isCompleted }, { checked: isSelected })}>
+            <div className={cx("todo-item-left")}>
+                <label className={cx("todo-check", { checked: isSelected })}>
+                    <input
+                        hidden
+                        id={index}
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={(e) => onSelect(e, index)}
+                    />
+                </label>
+                {isEditing ? (
+                    <input
+                        className={cx("edit-input")}
+                        type="text"
+                        value={editingText}
+                        onChange={(e) => onEditChange(e.target.value)}
+                        onBlur={() => onEditBlur(index, editingText)}
+                        onKeyDown={(e) => onEditKeyDown(e)}
+                        autoFocus
+                    />
+                ) : (
+                    <span className={cx("title", { completed: isCompleted })}>{todo.title}</span>
+                )}
+            </div>
             {children ? (
                 children
             ) : (
-                <div>
-                    <input type="checkbox" checked={isCompleted} onChange={() => onToggle(index, isCompleted)} />
-                    <button onClick={() => onEditClick(index, todo.title)}>Edit</button>
-                    <button onClick={() => onDelete(index)}>&times;</button>
+                <div className={cx("todo-item-right")}>
+                    <label className={cx("checkbox-completed", { completed: isCompleted })}>
+                        {isCompleted ? "Completed" : "Complete"}
+                        <input
+                            hidden
+                            type="checkbox"
+                            checked={isCompleted}
+                            onChange={() => onToggle(index, isCompleted)}
+                        />
+                    </label>
+                    <button className={cx("action", 'edit')} onClick={() => onEditClick(index, todo.title)}>
+                        <FontAwesomeIcon icon={faPenToSquare} />
+                    </button>
+                    <button className={cx("action", 'danger')} onClick={() => onDelete(index)}>
+                        <FontAwesomeIcon icon={faTrashCan} />
+                    </button>
                 </div>
             )}
-        </li>
+        </label>
     );
 }
 
