@@ -1,5 +1,7 @@
 import { useState } from "react";
 import classNames from "classnames/bind";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass, faSquareXmark } from "@fortawesome/free-solid-svg-icons";
 
 import styles from "./Search.module.scss";
 
@@ -16,17 +18,25 @@ function Search({ onSubmit }) {
     return (
         <div className={cx("search-box")}>
             <input
+                className={cx("search-input")}
                 type="text"
                 placeholder="Search tasks..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        onSubmit(searchTerm);
+                    }
+                }}
             />
             {searchTerm && (
                 <button className={cx("clear-btn")} onClick={handleClearSearch}>
-                    &times;
+                    <FontAwesomeIcon icon={faSquareXmark} />
                 </button>
             )}
-            <button onClick={() => onSubmit(searchTerm)}>Search</button>
+            <button className={cx("search-button")} onClick={() => onSubmit(searchTerm)}>
+                <FontAwesomeIcon icon={faMagnifyingGlass} />
+            </button>
         </div>
     );
 }
