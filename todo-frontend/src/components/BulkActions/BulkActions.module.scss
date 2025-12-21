@@ -1,0 +1,72 @@
+.bulk-actions-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    width: 100%;
+    transition: width 1s ease-in-out;
+}
+
+.select-label {
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--primary-color1), transparent 50%);
+    padding: 4px 16px;
+    background-color: transparent;
+    border: 2px solid color-mix(in srgb, var(--primary-color1), transparent 50%);
+    border-radius: 99px;
+    transition: all 0.2s ease-in-out;
+    z-index: 1;
+
+    &:hover {
+        color: var(--primary-color1);
+        border-color: var(--primary-color1);
+        background-color: color-mix(in srgb, var(--primary-color1), transparent 95%);
+    }
+
+    &.active {
+        background-color: var(--primary-color1);
+        color: #fff;
+    }
+}
+
+.select-number {
+    margin-left: 10px;
+    color: #5d5d5d;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0s ease;
+    transform: translate(-100%);
+    z-index: 0;
+
+    &.active {
+        opacity: 1;
+        visibility: visible;
+        transition: all 0.5s ease;
+        transform: translateX(0);
+    }
+}
+
+.bulk-actions {
+    display: inline-flex;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translateX(100%);
+    opacity: 0;
+    width: 82px;
+    overflow: hidden;
+    border: 1px solid #ffffff;
+    border-radius: 99px;
+    margin-left: auto;
+    transition: all 0.3s ease;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+
+    &.active {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
