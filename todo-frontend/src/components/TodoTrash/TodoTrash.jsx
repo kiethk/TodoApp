@@ -7,6 +7,14 @@ import styles from "./TodoTrash.module.scss";
 import Search from "../Search/Search";
 import BulkActions from "../BulkActions/BulkActions";
 import TodoItem from "../TodoItem/TodoItem";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faClockRotateLeft,
+    faListCheck,
+    faTrashCan,
+    faMagnifyingGlass,
+    faList,
+} from "@fortawesome/free-solid-svg-icons";
 
 const cx = classNames.bind(styles);
 
@@ -88,34 +96,61 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
     const filteredTodos = todos.filter((todo) => todo.title.toLowerCase().includes(appliedSearchTerm.toLowerCase()));
 
     return (
-        <Wrapper>
-            <h1>Todo Trash</h1>
-            <Link to="/">
-                <button>Your tasks</button>
+        <Wrapper className={cx("todo-trash-wrapper")}>
+            <h1 className={cx("heading")}>Todo Trash</h1>
+            <Link className={cx("todo-list")} to="/">
+                Your tasks
+                <FontAwesomeIcon className={cx("list-icon")} icon={faListCheck} />
             </Link>
             <Search onSubmit={handleSearch} />
             <BulkActions selectedIds={selectedIds} handleSelectAll={handleSelectAll} filteredTodos={filteredTodos}>
-                <button disabled={isLoading} onClick={handleDeletePermanentSelected}>
-                    Delete
+                <button className={cx("bulk-action", "success")} disabled={isLoading} onClick={handleRestoreSelected}>
+                    <FontAwesomeIcon icon={faClockRotateLeft} />
                 </button>
-                <button disabled={isLoading} onClick={handleRestoreSelected}>
-                    Restore
+                <button
+                    className={cx("bulk-action", "danger")}
+                    disabled={isLoading}
+                    onClick={handleDeletePermanentSelected}
+                >
+                    <FontAwesomeIcon icon={faTrashCan} />
                 </button>
             </BulkActions>
             <ul className={cx("todo-trash")}>
-                {filteredTodos.map((todo) => (
-                    <TodoItem
-                        key={todo._id}
-                        index={todo._id}
-                        todo={todo}
-                        isSelected={selectedIds.includes(todo._id)}
-                        onSelect={handleSelect}
-                    >
-                        <button onClick={() => onRestore(todo._id)}>Restore</button>
-                        <button onClick={() => onPermanentDelete(todo._id)}>Delete</button>
-                    </TodoItem>
-                ))}
+                {filteredTodos.length === 0 ? (
+                    <li>
+                        {appliedSearchTerm ? (
+                            <span>
+                                <FontAwesomeIcon icon={faMagnifyingGlass} />
+                                {"  "} No results for "{appliedSearchTerm}"
+                            </span>
+                        ) : (
+                            <span>
+                                <FontAwesomeIcon icon={faList} />
+                                {"  "} No deleted tasks!
+                            </span>
+                        )}
+                    </li>
+                ) : (
+                    filteredTodos.map((todo) => (
+                        <TodoItem
+                            key={todo._id}
+                            index={todo._id}
+                            todo={todo}
+                            isSelected={selectedIds.includes(todo._id)}
+                            onSelect={handleSelect}
+                        >
+                            <button className={cx("action", "success")} onClick={() => onRestore(todo._id)}>
+                                <FontAwesomeIcon icon={faClockRotateLeft} />
+                            </button>
+                            <button className={cx("action", "danger")} onClick={() => onPermanentDelete(todo._id)}>
+                                <FontAwesomeIcon icon={faTrashCan} />
+                            </button>
+                        </TodoItem>
+                    ))
+                )}
             </ul>
+            {/* 
+                )) */}
         </Wrapper>
     );
 }

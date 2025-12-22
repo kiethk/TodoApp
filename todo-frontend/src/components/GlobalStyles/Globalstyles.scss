@@ -7,9 +7,10 @@
 :root {
     --font-family: "Lato", sans-serif;
     --primary-color1: #00d4ff;
+    --primary-color1-light: color-mix(in srgb, var(--primary-color1), transparent 75%);
     --primary-color2: #090979;
     --success-color: #2ecc71;
-    --danger-color: #e74c3c;
+    --danger-color: #e74d3c;
     --bg-gradient: linear-gradient(141deg, #020024 0%, #090979 19%, #00d4ff 100%);
     --bg-color: #020024;
     --text-color: #181818;
@@ -37,7 +38,11 @@ a {
 }
 
 button {
+    font-size: 1.6rem;
     border: none;
     outline: none;
     cursor: pointer;
+}
+
+input.checkbox {
 }

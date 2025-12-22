@@ -1,0 +1,88 @@
+.todo-trash-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.heading {
+    text-align: center;
+}
+
+.todo-list {
+    display: inline-block;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--primary-color1), transparent 50%);
+    padding: 4px 16px;
+    margin: 5px auto 0;
+    background-color: transparent;
+    border: 2px solid color-mix(in srgb, var(--primary-color1), transparent 50%);
+    border-radius: 99px;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        color: var(--primary-color1);
+        border-color: var(--primary-color1);
+        background-color: color-mix(in srgb, var(--primary-color1), transparent 95%);
+    }
+}
+
+.list-icon {
+    margin-left: 5px;
+}
+
+.todo-trash {
+    --sb-track-color: #dddddd;
+    --sb-thumb-color: #a7a7a7;
+    --sb-size: 5px;
+
+    margin-top: 10px;
+    padding: 5px;
+    overflow: overlay;
+
+    &::-webkit-scrollbar {
+        width: var(--sb-size);
+    }
+
+    &::-webkit-scrollbar-track {
+        background: var(--sb-track-color);
+        border-radius: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--sb-thumb-color);
+        border-radius: 5px;
+    }
+}
+
+.bulk-action {
+    flex: 1;
+    display: inline-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 25px;
+
+    &.danger {
+        background-color: color-mix(in srgb, var(--danger-color), transparent 75%);
+    }
+
+    &.success {
+        background-color: color-mix(in srgb, var(--success-color), transparent 75%);
+    }
+}
+
+.action {
+    margin-right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+
+    &.success {
+        background-color: var(--success-color);
+    }
+
+    &.danger {
+        background-color: var(--danger-color);
+    }
+}

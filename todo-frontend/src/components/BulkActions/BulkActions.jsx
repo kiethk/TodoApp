@@ -19,10 +19,12 @@ function BulkActions({ children, selectedIds, handleSelectAll, filteredTodos }) 
                 />
                 Select All
             </label>
-            <span className={cx("select-number", { active: selectedIds.length > 0 })}>
+            <span className={cx("select-number", { active: selectedIds.length > 0 && filteredTodos.length > 0 })}>
                 Selected: {selectedIds.length}
             </span>
-            <span className={cx("bulk-actions", { active: selectedIds.length > 0 })}>{children}</span>
+            <span className={cx("bulk-actions", { active: selectedIds.length > 0 && filteredTodos.length > 0 })}>
+                {children}
+            </span>
         </div>
     );
 }

@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList, faMagnifyingGlass, faPlus, faToggleOff } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 
 import classNames from "classnames/bind";
 import styles from "./TodoList.module.scss";
@@ -15,6 +18,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
     const [editingId, setEditingId] = useState(null);
     const [editingText, setEditingText] = useState("");
     const [filter, setFilter] = useState("all");
+    const [filterStatus, setFilterStatus] = useState("all");
     const [appliedSearchTerm, setAppliedSearchTerm] = useState("");
     const [selectedIds, setSelectedIds] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -92,6 +96,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
 
     const handleFilterChange = (type) => {
         setFilter(type);
+        setFilterStatus(type);
     };
 
     const handleSearch = (text) => {
@@ -188,40 +193,81 @@ function TodoList({ todos, onSetTodos, onDelete }) {
     });
 
     return (
-        <Wrapper>
-            <h1>Todo App</h1>
-            <Link to="/trash">
-                <button>Trash</button>
+        <Wrapper className={cx("todo-list-wrapper")}>
+            <h1 className={cx("heading")}>Todo App</h1>
+            <Link className={cx("trash")} to="/trash">
+                View Trash
+                <FontAwesomeIcon className={cx("trash-icon")} icon={faTrashCan} />
             </Link>
-            <form onSubmit={(e) => handleSubmit(e)}>
+            <div className={cx("separate")}></div>
+            <form className={cx("form")} onSubmit={(e) => handleSubmit(e)}>
                 <input
+                    className={cx("form-input")}
                     type="text"
                     placeholder="Enter your tasks..."
                     value={newTodo}
                     onChange={(e) => handleChange(e)}
                 />
-                <button type="submit">Add</button>
+                <button className={cx("form-submit")} type="submit">
+                    <FontAwesomeIcon icon={faPlus} />
+                </button>
             </form>
             <Search onSubmit={handleSearch} />
-            <div className={cx("filter")}>
-                <button onClick={() => handleFilterChange("all")}>All</button>
-                <button onClick={() => handleFilterChange("active")}>Active</button>
-                <button onClick={() => handleFilterChange("completed")}>Completed</button>
+            <div className={cx("filter", filterStatus)}>
+                <div className={cx("filter-tag", filterStatus)}></div>
+                <button
+                    className={cx("filter-item", { active: filterStatus === "active" })}
+                    onClick={() => handleFilterChange("active")}
+                >
+                    Active
+                </button>
+                <button
+                    className={cx("filter-item", { active: filterStatus === "all" })}
+                    onClick={() => handleFilterChange("all")}
+                >
+                    All
+                </button>
+                <button
+                    className={cx("filter-item", { active: filterStatus === "completed" })}
+                    onClick={() => handleFilterChange("completed")}
+                >
+                    Completed
+                </button>
             </div>
             <BulkActions selectedIds={selectedIds} handleSelectAll={handleSelectAll} filteredTodos={filteredTodos}>
-                <div className={cx("bulk-actions")}>
-                    <button disabled={isLoading} onClick={handleMoveToTrashSelected}>
-                        Delete
-                    </button>
-                    <button disabled={isLoading} onClick={handleToggleCompleteSelected}>
-                        Reverse complete state
-                    </button>
-                </div>
+                <button
+                    className={cx("bulk-action", "danger")}
+                    disabled={isLoading}
+                    onClick={handleMoveToTrashSelected}
+                >
+                    <FontAwesomeIcon icon={faTrashCan} />
+                </button>
+                <button
+                    className={cx("bulk-action", "primary")}
+                    disabled={isLoading}
+                    onClick={handleToggleCompleteSelected}
+                >
+                    <FontAwesomeIcon icon={faToggleOff} />
+                </button>
             </BulkActions>
             <ul className={cx("todo-list")}>
                 {filteredTodos.length === 0 ? (
-                    <li className={cx("no-result")}>
-                        {appliedSearchTerm ? `🔍 No results for "${appliedSearchTerm}"` : "📝 Add your task!"}
+                    <li>
+                        {appliedSearchTerm ? (
+                            <span>
+                                <FontAwesomeIcon icon={faMagnifyingGlass} />
+                                {"  "} No results for "{appliedSearchTerm}"
+                            </span>
+                        ) : (
+                            <span>
+                                <FontAwesomeIcon icon={faList} />
+                                {filterStatus === "all"
+                                    ? " Add your tasks!"
+                                    : filterStatus === "active"
+                                    ? " No tasks left. Enjoy your day!"
+                                    : " Let's get things done!"}
+                            </span>
+                        )}
                     </li>
                 ) : (
                     filteredTodos.map((todo) => {
