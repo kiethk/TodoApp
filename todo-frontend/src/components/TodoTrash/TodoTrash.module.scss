@@ -4,6 +4,11 @@
 }
 
 .heading {
+    background: var(--bg-gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    filter: var(--drop-shadow-text);
+    color: transparent;
     text-align: center;
 }
 
@@ -63,11 +68,63 @@
     height: 25px;
 
     &.danger {
-        background-color: color-mix(in srgb, var(--danger-color), transparent 75%);
+        background-color: var(--danger-color);
     }
 
     &.success {
-        background-color: color-mix(in srgb, var(--success-color), transparent 75%);
+        background-color: var(--success-color);
+    }
+}
+
+.item-wrapper {
+    position: relative;
+    & + .item-wrapper {
+        margin-top: 8px;
+    }
+}
+
+.confirm-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to right,
+        var(--danger-color) 0%,
+        rgba(255, 201, 201, 0.95) 50%,
+        var(--danger-color) 100%
+    );
+    z-index: 10;
+    border-radius: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.confirm-button {
+    border: 1px solid #000;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    & + .confirm-button {
+        margin-left: 30px;
+    }
+
+    height: 35px;
+    width: 100px;
+    border-radius: 8px;
+
+    &.delete {
+        background-color: var(--danger-color);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
 }
 

@@ -15,6 +15,7 @@ const cx = classNames.bind(styles);
 
 function TodoList({ todos, onSetTodos, onDelete }) {
     const [newTodo, setNewTodo] = useState("");
+    const [invalidTodo, setInvalidTodo] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [editingText, setEditingText] = useState("");
     const [filter, setFilter] = useState("all");
@@ -31,7 +32,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
         e.preventDefault();
 
         if (!newTodo.trim()) {
-            alert("Please enter the name of your task.");
+            setInvalidTodo(true);
             return;
         }
 
@@ -48,6 +49,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
         onSetTodos([...todos, createdTodo]);
 
         setNewTodo("");
+        setInvalidTodo(false);
     };
 
     const handleToggleComplete = async (index, isCompleted) => {
@@ -200,6 +202,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
                 <FontAwesomeIcon className={cx("trash-icon")} icon={faTrashCan} />
             </Link>
             <div className={cx("separate")}></div>
+
             <form className={cx("form")} onSubmit={(e) => handleSubmit(e)}>
                 <input
                     className={cx("form-input")}
@@ -207,10 +210,12 @@ function TodoList({ todos, onSetTodos, onDelete }) {
                     placeholder="Enter your tasks..."
                     value={newTodo}
                     onChange={(e) => handleChange(e)}
+                    onFocus={() => setInvalidTodo(false)}
                 />
                 <button className={cx("form-submit")} type="submit">
                     <FontAwesomeIcon icon={faPlus} />
                 </button>
+                {invalidTodo && <span className={cx("invalid-todo")}>Please enter the name of your task!</span>}
             </form>
             <Search onSubmit={handleSearch} />
             <div className={cx("filter", filterStatus)}>
@@ -236,23 +241,23 @@ function TodoList({ todos, onSetTodos, onDelete }) {
             </div>
             <BulkActions selectedIds={selectedIds} handleSelectAll={handleSelectAll} filteredTodos={filteredTodos}>
                 <button
-                    className={cx("bulk-action", "danger")}
-                    disabled={isLoading}
-                    onClick={handleMoveToTrashSelected}
-                >
-                    <FontAwesomeIcon icon={faTrashCan} />
-                </button>
-                <button
                     className={cx("bulk-action", "primary")}
                     disabled={isLoading}
                     onClick={handleToggleCompleteSelected}
                 >
                     <FontAwesomeIcon icon={faToggleOff} />
                 </button>
+                <button
+                    className={cx("bulk-action", "danger")}
+                    disabled={isLoading}
+                    onClick={handleMoveToTrashSelected}
+                >
+                    <FontAwesomeIcon icon={faTrashCan} />
+                </button>
             </BulkActions>
-            <ul className={cx("todo-list")}>
+            <div className={cx("todo-list")}>
                 {filteredTodos.length === 0 ? (
-                    <li>
+                    <div>
                         {appliedSearchTerm ? (
                             <span>
                                 <FontAwesomeIcon icon={faMagnifyingGlass} />
@@ -268,7 +273,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
                                     : " Let's get things done!"}
                             </span>
                         )}
-                    </li>
+                    </div>
                 ) : (
                     filteredTodos.map((todo) => {
                         const index = todo._id;
@@ -296,7 +301,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
                         );
                     })
                 )}
-            </ul>
+            </div>
         </Wrapper>
     );
 }

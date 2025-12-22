@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames/bind";
-
-import Wrapper from "../Wrapper/Wrapper";
-import styles from "./TodoTrash.module.scss";
-import Search from "../Search/Search";
-import BulkActions from "../BulkActions/BulkActions";
-import TodoItem from "../TodoItem/TodoItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faClockRotateLeft,
@@ -16,12 +10,19 @@ import {
     faList,
 } from "@fortawesome/free-solid-svg-icons";
 
+import Wrapper from "../Wrapper/Wrapper";
+import styles from "./TodoTrash.module.scss";
+import Search from "../Search/Search";
+import BulkActions from "../BulkActions/BulkActions";
+import TodoItem from "../TodoItem/TodoItem";
+
 const cx = classNames.bind(styles);
 
 function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
     const [appliedSearchTerm, setAppliedSearchTerm] = useState("");
     const [selectedIds, setSelectedIds] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [deletingId, setDeletingId] = useState(null);
 
     const handleSearch = (text) => {
         setAppliedSearchTerm(text);
@@ -93,6 +94,12 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
         }
     };
 
+    const handleConfirmDelete = async (id) => {
+        await onPermanentDelete(id);
+
+        setDeletingId(null);
+    };
+
     const filteredTodos = todos.filter((todo) => todo.title.toLowerCase().includes(appliedSearchTerm.toLowerCase()));
 
     return (
@@ -115,9 +122,9 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
                     <FontAwesomeIcon icon={faTrashCan} />
                 </button>
             </BulkActions>
-            <ul className={cx("todo-trash")}>
+            <div className={cx("todo-trash")}>
                 {filteredTodos.length === 0 ? (
-                    <li>
+                    <div>
                         {appliedSearchTerm ? (
                             <span>
                                 <FontAwesomeIcon icon={faMagnifyingGlass} />
@@ -129,26 +136,44 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
                                 {"  "} No deleted tasks!
                             </span>
                         )}
-                    </li>
+                    </div>
                 ) : (
                     filteredTodos.map((todo) => (
-                        <TodoItem
-                            key={todo._id}
-                            index={todo._id}
-                            todo={todo}
-                            isSelected={selectedIds.includes(todo._id)}
-                            onSelect={handleSelect}
-                        >
-                            <button className={cx("action", "success")} onClick={() => onRestore(todo._id)}>
-                                <FontAwesomeIcon icon={faClockRotateLeft} />
-                            </button>
-                            <button className={cx("action", "danger")} onClick={() => onPermanentDelete(todo._id)}>
-                                <FontAwesomeIcon icon={faTrashCan} />
-                            </button>
-                        </TodoItem>
+                        <div key={todo._id} className={cx("item-wrapper")}>
+                            <TodoItem
+                                index={todo._id}
+                                todo={todo}
+                                isSelected={selectedIds.includes(todo._id)}
+                                onSelect={handleSelect}
+                            >
+                                <button className={cx("action", "success")} onClick={() => onRestore(todo._id)}>
+                                    <FontAwesomeIcon icon={faClockRotateLeft} />
+                                </button>
+                                <button className={cx("action", "danger")} onClick={() => setDeletingId(todo._id)}>
+                                    <FontAwesomeIcon icon={faTrashCan} />
+                                </button>
+                            </TodoItem>
+
+                            {deletingId === todo._id && (
+                                <div className={cx("confirm-overlay")}>
+                                    <button
+                                        className={cx("confirm-button", "cancel")}
+                                        onClick={() => setDeletingId(null)}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        className={cx("confirm-button", "delete")}
+                                        onClick={() => handleConfirmDelete(todo._id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     ))
                 )}
-            </ul>
+            </div>
             {/* 
                 )) */}
         </Wrapper>

@@ -1,8 +1,12 @@
 .wrapper {
+    position: relative;
     width: 650px;
     height: 70vh;
     padding: 20px;
-    background-color: #fff5ee;
+    background-color: var(--bg-content);
     border-radius: 5px;
     overflow: hidden;
+    box-shadow: var(--shadow-content);
 }
+
+

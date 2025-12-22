@@ -42,7 +42,6 @@ function App() {
     };
 
     const handlePermanentDelete = async (id) => {
-        if (!window.confirm("Do you want to delete it?")) return;
         const res = await fetch(`http://localhost:3000/todos/${id}`, {
             method: "DELETE",
         });

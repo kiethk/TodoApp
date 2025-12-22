@@ -4,6 +4,11 @@
 }
 
 .heading {
+    background: var(--bg-gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    filter: var(--drop-shadow-text);
+    color: transparent;
     text-align: center;
 }
 
@@ -34,14 +39,15 @@
     margin: 10px 0;
     width: 100%;
     height: 2px;
-    background-color: #eee;
+    background-color: var(--color-separate);
 }
 
 .form {
+    position: relative;
     display: flex;
     margin: 0 auto;
     width: max-content;
-    background-color: #fff;
+    background-color: var(--bg-component);
     border: 1.5px solid var(--primary-color1);
     border-radius: 8px;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 6px, rgba(0, 0, 0, 0.23) 0px 1px 6px,
@@ -49,7 +55,17 @@
         rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
+.invalid-todo {
+    display: inline-block;
+    position: absolute;
+    font-size: 1.4rem;
+    top: 31px;
+    left: 10px;
+    color: var(--danger-color);
+}
+
 .form-input {
+    color: var(--text-color);
     font-size: 1.6rem;
     border: none;
     outline: none;
@@ -58,6 +74,7 @@
 }
 
 .form-submit {
+    color: var(--text-color);
     height: 100%;
     width: 30px;
     border-left: 1.5px solid var(--primary-color1);
@@ -79,16 +96,17 @@
     margin-top: 10px;
     border: 1px solid #eee;
     border-radius: 8px;
-    box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+    box-shadow: var(--shadow-filter);
+    background-color: var(--bg-component);
 
     &.active {
-        border-color: color-mix(in srgb, var(--danger-color), transparent 75%);
+        border-color: var(--danger-color);
     }
     &.all {
         border-color: var(--primary-color1-light);
     }
     &.completed {
-        border-color: color-mix(in srgb, var(--success-color), transparent 75%);
+        border-color: var(--success-color);
     }
 }
 
@@ -103,18 +121,18 @@
 
     &.active {
         left: 0;
-        background-color: color-mix(in srgb, var(--danger-color), transparent 75%);
+        background-color: var(--danger-color);
     }
 
     &.all {
         left: 33.33%;
-        background-color: var(--primary-color1-light);
+        background-color: var(--primary-color1);
     }
 
     &.completed {
         left: 100%;
         transform: translateX(-100%);
-        background-color: color-mix(in srgb, var(--success-color), transparent 75%);
+        background-color: var(--success-color);
     }
 }
 
@@ -123,6 +141,7 @@
     flex: 1;
     background-color: transparent;
     transition: font-weight 0.5s ease;
+    color: var(--text-color);
 
     &.active {
         font-weight: 600;
@@ -138,11 +157,11 @@
     height: 25px;
 
     &.danger {
-        background-color: color-mix(in srgb, var(--danger-color), transparent 75%);
+        background-color: var(--danger-color);
     }
 
     &.primary {
-        background-color: var(--primary-color1-light);
+        background-color: var(--primary-color1);
     }
 }
 
@@ -169,4 +188,3 @@
         border-radius: 5px;
     }
 }
-

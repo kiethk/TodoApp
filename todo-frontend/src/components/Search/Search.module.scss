@@ -1,11 +1,11 @@
 .search-box {
     position: relative;
-    margin: 15px auto 0;
+    margin: 25px auto 0;
     width: max-content;
     border-radius: 8px;
     border: 1.5px solid var(--primary-color2);
-    background-color: #fff;
-    box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+    background-color: var(--bg-component);
+    box-shadow: var(--shadow-search);
 }
 
 .search-input {
