@@ -1,3 +1,5 @@
+@use "../GlobalStyles/GlobalStyles.scss" as *;
+
 .wrapper {
     position: relative;
     width: 650px;
@@ -7,6 +9,17 @@
     border-radius: 5px;
     overflow: hidden;
     box-shadow: var(--shadow-content);
+
+    display: flex;
+    flex-direction: column;
+
+    @include tablet {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding: 15px;
+    }
 }
-
-

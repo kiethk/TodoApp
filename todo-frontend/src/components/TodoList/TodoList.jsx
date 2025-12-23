@@ -24,6 +24,8 @@ function TodoList({ todos, onSetTodos, onDelete }) {
     const [selectedIds, setSelectedIds] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
     const handleChange = (e) => {
         setNewTodo(e.target.value);
     };
@@ -36,7 +38,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
             return;
         }
 
-        const res = await fetch("http://localhost:3000/todos", {
+        const res = await fetch(`${API_URL}/todos`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -55,7 +57,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
     const handleToggleComplete = async (index, isCompleted) => {
         const newCompleteState = !isCompleted;
 
-        const res = await fetch(`http://localhost:3000/todos/${index}`, {
+        const res = await fetch(`${API_URL}/todos/${index}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -78,7 +80,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
     const handleEdit = async (id, text) => {
         if (!text.trim()) return;
 
-        const res = await fetch(`http://localhost:3000/todos/${id}`, {
+        const res = await fetch(`${API_URL}/todos/${id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title: text }),
@@ -128,7 +130,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
         setIsLoading(true);
         try {
             const deletePromises = selectedIds.map((id) =>
-                fetch(`http://localhost:3000/todos/${id}`, {
+                fetch(`${API_URL}/todos/${id}`, {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ isDeleted: true }),
@@ -155,7 +157,7 @@ function TodoList({ todos, onSetTodos, onDelete }) {
             const updatePromises = selectedIds.map(async (id) => {
                 const selectedTodo = filteredTodos.find((todo) => todo._id === id);
 
-                const res = await fetch(`http://localhost:3000/todos/${id}`, {
+                const res = await fetch(`${API_URL}/todos/${id}`, {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",

@@ -1,3 +1,18 @@
+$mobile-width: 425px;
+$tablet-width: 768px;
+
+@mixin mobile {
+    @media only screen and (max-width: #{$mobile-width}) {
+        @content;
+    }
+}
+
+@mixin tablet {
+    @media only screen and  (max-width: #{$tablet-width}) {
+        @content;
+    }
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -5,6 +20,8 @@
 }
 
 :root {
+    width: 100%;
+
     --font-family: "Lato", sans-serif;
     --primary-color1: #00d4ff;
     --primary-color1-light: color-mix(in srgb, var(--primary-color1), transparent 75%);
@@ -54,6 +71,31 @@ body {
     font-family: var(--font-family);
     font-size: 1.6rem;
     color: var(--text-color);
+
+    @include tablet {
+        display: block;
+        padding: 0;
+
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100vh;
+    overscroll-behavior-y: none;
+}
+
+#root {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    @include tablet {
+        min-height: 100vh;
+        flex-direction: column;
+    }
 }
 
 a {
@@ -65,9 +107,13 @@ button {
     font-size: 1.6rem;
     border: none;
     outline: none;
-    cursor: pointer;
+
     user-select: none;
 }
 
-input.checkbox {
+label,
+button,
+a {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }

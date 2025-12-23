@@ -24,6 +24,8 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
     const [isLoading, setIsLoading] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
     const handleSearch = (text) => {
         setAppliedSearchTerm(text);
     };
@@ -33,7 +35,7 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
         setIsLoading(true);
         try {
             const deletePromises = selectedIds.map((id) =>
-                fetch(`http://localhost:3000/todos/${id}`, {
+                fetch(`${API_URL}/todos/${id}`, {
                     method: "DELETE",
                 })
             );
@@ -54,7 +56,7 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
         setIsLoading(true);
         try {
             const restorePromises = selectedIds.map((id) =>
-                fetch(`http://localhost:3000/todos/${id}`, {
+                fetch(`${API_URL}/todos/${id}`, {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ isDeleted: false }),
@@ -109,6 +111,7 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
                 Your tasks
                 <FontAwesomeIcon className={cx("list-icon")} icon={faListCheck} />
             </Link>
+            <div className={cx("separate")}></div>
             <Search onSubmit={handleSearch} />
             <BulkActions selectedIds={selectedIds} handleSelectAll={handleSelectAll} filteredTodos={filteredTodos}>
                 <button className={cx("bulk-action", "success")} disabled={isLoading} onClick={handleRestoreSelected}>
