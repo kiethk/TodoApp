@@ -1,14 +1,58 @@
-# ------------------------------------
-# 1. Backend (todo-backend)
-# ------------------------------------
-/todo-backend/node_modules
-/todo-backend/.env
+# ------------------------------------------------
+# 1. Dependencies (Applies to all subfolders)
+# ------------------------------------------------
+node_modules/
 
-# ------------------------------------
-# 3. Others
-# ------------------------------------
+# ------------------------------------------------
+# 2. Environment Variables (Critical for Security)
+# ------------------------------------------------
+# Block all environment files in frontend, backend, and root
+.env
+.env.*
+*.local
 
+# Exception: Keep example files to share configuration
+!.env.example
+
+# ------------------------------------------------
+# 3. Build Outputs
+# ------------------------------------------------
+dist/
+dist-ssr/
+build/
+out/
+coverage/
+
+# ------------------------------------------------
+# 4. Logs & Debug
+# ------------------------------------------------
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
+# ------------------------------------------------
+# 5. System & IDE Files
+# ------------------------------------------------
+# macOS
 .DS_Store
+
+# Windows
+Thumbs.db
+*.sw?
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+
+# JetBrains (WebStorm, IntelliJ...)
+.idea/
+
+# Visual Studio
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

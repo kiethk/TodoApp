@@ -6,7 +6,6 @@ import GlobalStyles from "./components/GlobalStyles";
 import TodoList from "./components/TodoList";
 import TodoTrash from "./components/TodoTrash";
 
-
 function App() {
     const [todos, setTodos] = useState([]);
     const API_URL = import.meta.env.VITE_API_URL;
@@ -19,7 +18,7 @@ function App() {
         };
 
         fetchTodos();
-    }, []);
+    }, [API_URL]);
 
     const handleMoveToTrash = async (id) => {
         const res = await fetch(`${API_URL}/todos/${id}`, {
