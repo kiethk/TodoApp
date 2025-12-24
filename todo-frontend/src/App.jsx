@@ -1,16 +1,16 @@
 import { Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-import 'animate.css';
+import "animate.css";
 
 import GlobalStyles from "./components/GlobalStyles";
 import TodoList from "./components/TodoList";
 import TodoTrash from "./components/TodoTrash";
 
+
 function App() {
     const [todos, setTodos] = useState([]);
     const API_URL = import.meta.env.VITE_API_URL;
 
-    
     useEffect(() => {
         const fetchTodos = async () => {
             fetch(`${API_URL}/todos`)

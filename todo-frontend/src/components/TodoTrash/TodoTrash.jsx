@@ -23,15 +23,30 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
     const [selectedIds, setSelectedIds] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     const API_URL = import.meta.env.VITE_API_URL;
+
 
     const handleSearch = (text) => {
         setAppliedSearchTerm(text);
     };
 
+    const handleDeleteClick = () => {
+        setShowConfirmModal(true);
+    };
+
+    const handleConfirmDeleteSelected = () => {
+        handleDeletePermanentSelected();
+        setShowConfirmModal(false);
+        setSelectedIds([]);
+    };
+
+    const handleCancelDeleteSelected = () => {
+        setShowConfirmModal(false);
+    };
+
     const handleDeletePermanentSelected = async () => {
-        if (!window.confirm("Do you want to delete all of them?")) return;
         setIsLoading(true);
         try {
             const deletePromises = selectedIds.map((id) =>
@@ -117,11 +132,7 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
                 <button className={cx("bulk-action", "success")} disabled={isLoading} onClick={handleRestoreSelected}>
                     <FontAwesomeIcon icon={faClockRotateLeft} />
                 </button>
-                <button
-                    className={cx("bulk-action", "danger")}
-                    disabled={isLoading}
-                    onClick={handleDeletePermanentSelected}
-                >
+                <button className={cx("bulk-action", "danger")} disabled={isLoading} onClick={handleDeleteClick}>
                     <FontAwesomeIcon icon={faTrashCan} />
                 </button>
             </BulkActions>
@@ -177,8 +188,26 @@ function TodoTrash({ todos, onSetTodos, onRestore, onPermanentDelete }) {
                     ))
                 )}
             </div>
-            {/* 
-                )) */}
+            {showConfirmModal && (
+                <div className={cx("modal-overlay")}>
+                    <div className={cx("modal-wrapper")}>
+                        <h3 className={cx("modal-heading")}>Confirm Deletion</h3>
+                        <p className={cx("modal-content")}>
+                            Are you sure you want to permanently delete <strong>{selectedIds.length}</strong>{" "}
+                            {selectedIds.length === 1 ? "task" : "tasks"}?
+                            <br /> This action <span className={cx("modal-danger")}>cannot be undone</span>.
+                        </p>
+                        <div className={cx("modal-actions")}>
+                            <button className={cx("modal-action")} onClick={handleCancelDeleteSelected}>
+                                Cancel
+                            </button>
+                            <button className={cx("modal-action", "confirm")} onClick={handleConfirmDeleteSelected}>
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </Wrapper>
     );
 }

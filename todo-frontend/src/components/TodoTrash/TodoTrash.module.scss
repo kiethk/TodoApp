@@ -1,4 +1,7 @@
+@use "../GlobalStyles/GlobalStyles.scss" as *;
+
 .todo-trash-wrapper {
+    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -149,5 +152,85 @@
 
     &.danger {
         background-color: var(--danger-color);
+    }
+}
+
+//Modal
+
+.modal-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 15;
+    animation: fadeIn 0.2s ease-out;
+    touch-action: none;
+
+    @include tablet {
+        position: fixed;
+    }
+}
+
+.modal-wrapper {
+    background-color: var(--bg-component);
+    padding: 20px 40px;
+    border-radius: 8px;
+    animation: scaleIn 0.2s ease-out;
+
+    @include mobile {
+        padding: 20px 15px;
+        width: calc(100vw - 30px);
+    }
+}
+
+.modal-heading {
+    text-align: center;
+}
+
+.modal-content {
+    margin-top: 15px;
+    line-height: 1.5;
+}
+
+.modal-danger {
+    color: var(--danger-color);
+    font-weight: 600;
+}
+
+.modal-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.modal-action {
+    padding: 10px 20px;
+    border-radius: 8px;
+    background-color: #dad9d9;
+
+    &.confirm {
+        background-color: var(--primary-color1);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
     }
 }
